@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards, Get, Param, Patch } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { GetUser } from '../shared/s/get-user.decorator';
 import { SubmissionsService } from './submissions.service';
@@ -19,4 +19,11 @@ export class SubmissionsController {
       contentLink: body.contentLink,
     });
   }
+
+  @Get('campaign/:campaignId')
+  @UseGuards(JwtAuthGuard)
+  async getCampaignSubmissions(@Param('campaignId') campaignId: string) {
+    const submissions = await this.submissionsService.findByCampaignId(campaignId);
+    return submissions.populate('influencerId', 'email').lean();
+  } 
 }

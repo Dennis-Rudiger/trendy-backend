@@ -4,7 +4,8 @@ import { CampaignsService } from './campaigns.service';
 
 @Controller('campaigns')
 export class CampaignsController {
-  constructor(private readonly campaignsService: CampaignsService) {}
+    constructor(private readonly campaignsService: CampaignsService)
+  {}
 
   @Get('joined')
   @UseGuards(JwtAuthGuard) // Requires valid JWT token
