@@ -8,6 +8,6 @@ export class CampaignsService {
   constructor(@InjectModel(Campaign.name) private campaignModel: Model<Campaign>) {}
 
   async findAllActive() {
-    return this.campaignModel.find({ status: 'active' }).exec();
+    return this.campaignModel.find({ status: 'active' });
   }
 }

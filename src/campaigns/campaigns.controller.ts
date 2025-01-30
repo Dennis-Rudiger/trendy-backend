@@ -8,8 +8,13 @@ export class CampaignsController {
   {}
 
   @Get('joined')
-  @UseGuards(JwtAuthGuard) // Requires valid JWT token
-  async getJoinedCampaigns() {
-    return this.campaignsService.findAllActive();
-  }
+@UseGuards(JwtAuthGuard)
+async getJoinedCampaigns() {
+  // Return the query with lean() before execution
+  return this.campaignsService.findAllActive()
+    .lean()
+    .exec();
+}
+
+  
 }

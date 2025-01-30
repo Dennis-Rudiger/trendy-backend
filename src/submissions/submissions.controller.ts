@@ -3,6 +3,8 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { GetUser } from '../shared/s/get-user.decorator';
 import { SubmissionsService } from './submissions.service';
 import { Submission } from '../schemas/Submissions/submission.schema';
+import {RolesGuard} from '../auth/roles.guard';
+import {Roles} from '../auth/roles.decorator';
 
 @Controller('submissions')
 export class SubmissionsController {
@@ -22,9 +24,26 @@ export class SubmissionsController {
   }
 
   @Get('campaign/:campaignId')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('brand')
+
   async getCampaignSubmissions(@Param('campaignId') campaignId: string) {
-    const submissions = await this.submissionsService.findByCampaignId(campaignId);
-    return submissions;
+    const result = await this.submissionsService.findByCampaignId(campaignId);
+    return result.map(doc => doc.toObject()); // Convert to plain objects here
   }
+
+  @Patch(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('brand')
+  async updateSubmissionStatus(
+    @Param('id') id: string,
+    @Body() body: { status: 'approved'| 'rejected'}
+  ){
+    return this.submissionsService.findByIdAndUpdate(
+      id,
+      {status: body.status},
+      {new: true},
+    );
+  }
+
 }
