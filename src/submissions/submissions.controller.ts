@@ -2,6 +2,7 @@ import { Body, Controller, Post, UseGuards, Get, Param, Patch } from '@nestjs/co
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { GetUser } from '../shared/s/get-user.decorator';
 import { SubmissionsService } from './submissions.service';
+import { Submission } from '../schemas/Submissions/submission.schema';
 
 @Controller('submissions')
 export class SubmissionsController {
@@ -11,7 +12,7 @@ export class SubmissionsController {
   @UseGuards(JwtAuthGuard)
   async createSubmission(
     @Body() body: { campaignId: string; contentLink: string },
-    @GetUser() user: { userId: string }, // Get influencer ID from JWT
+    @GetUser() user: { userId: string },
   ) {
     return this.submissionsService.create({
       campaignId: body.campaignId,
@@ -24,6 +25,6 @@ export class SubmissionsController {
   @UseGuards(JwtAuthGuard)
   async getCampaignSubmissions(@Param('campaignId') campaignId: string) {
     const submissions = await this.submissionsService.findByCampaignId(campaignId);
-    return submissions.populate('influencerId', 'email').lean();
-  } 
+    return submissions;
+  }
 }
